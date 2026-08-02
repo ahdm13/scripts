@@ -1,0 +1,45 @@
+# Package information:
+: ${pkg_name:=glibc}
+: ${pkg_version:=2.43}
+: ${pkg_build:=0-pre1}
+
+: ${pkg_dist="glibc-${pkg_version}.tar.xz
+glibc-fhs-1.patch"}
+: ${pkg_bdeps:=NIL}
+: ${pkg_rdeps:=NIL}
+
+# Environment variables:
+: ${target:=x86_64-linux-gnu}
+: ${toolchain_dir:="/usr/cross-${target}"}
+
+export PATH="${toolchain_dir}/bin:$PATH"
+
+pkg_build() {
+	tar -xvf "glibc-${pkg_version}.tar.xz"
+
+	mkdir -pv "${destdir}/lib64"
+
+	ln -svf ../usr/lib/ld-linux-x86-64.so.2 "${destdir}/lib64"
+	ln -svf ../usr/lib/ld-linux-x86-64.so.2 "${destdir}/lib64/ld-lsb-x86-64.so.3"
+
+	cd "glibc-${pkg_version}"
+
+	patch -Np1 -i ../glibc-fhs-1.patch
+
+	mkdir -pv build
+	cd build
+
+	echo "rootsbindir=/usr/sbin" > configparms
+	../configure                              \
+		--prefix=/usr                     \
+		--host="${target}"                \
+		--build=`../scripts/config.guess` \
+		--disable-nscd                    \
+		libc_cv_slibdir=/usr/lib          \
+		--enable-kernel=5.4
+
+	make -j 1
+	make DESTDIR="${destdir}" install
+
+	sed '/RTLDLIST=/s@/usr@@g' -i "${destdir}/usr/bin/ldd"
+}

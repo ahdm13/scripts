@@ -1,0 +1,35 @@
+# Package information:
+: ${pkg_name:=coreutils}
+: ${pkg_version:=9.10}
+: ${pkg_build:=0-pre1}
+: ${pkg_dist:="coreutils-${pkg_version}.tar.xz"}
+: ${pkg_bdeps:=NIL}
+: ${pkg_rdeps:=NIL}
+
+# Environment variables:
+: ${jobs:=1}
+: ${target:=x86_64-linux-gnu}
+: ${toolchain_dir:="/usr/cross-${target}"}
+
+export PATH="${toolchain_dir}/bin:$PATH"
+
+pkg_build() {
+	tar -xvf "$pkg_dist"
+	cd "coreutils-${pkg_version}"
+
+	./configure                                \
+		--prefix=/usr                      \
+		--host="$target"                   \
+		--build=`./build-aux/config.guess` \
+		--enable-install-program=hostname  \
+		--enable-no-install-program=kill,uptime
+
+	make -j "$jobs"
+	make DESTDIR="$destdir" install
+
+	mkdir -pv "${destdir}/usr/sbin"
+	mv -v "${destdir}/usr/bin/chroot" "${destdir}/usr/sbin"
+	mkdir -pv "${destdir}/usr/share/man/man8"
+	mv -v "${destdir}/usr/share/man/man1/chroot.1" "${destdir}/usr/share/man/man8/chroot.8"
+	sed -i 's/"1"/"8"/' "${destdir}/usr/share/man/man8/chroot.8"
+}

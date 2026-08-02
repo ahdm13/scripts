@@ -1,0 +1,45 @@
+# Package information:
+: ${pkg_name:=binutils}
+: ${pkg_version:=2.46.0}
+: ${pkg_build:=0-pre1}
+: ${pkg_dist:="binutils-${pkg_version}.tar.xz"}
+: ${pkg_bdeps:=NIL}
+: ${pkg_rdeps:=NIL}
+
+# Environment variables:
+: ${jobs:=1}
+: ${target:=x86_64-linux-gnu}
+: ${toolchain_dir:="/usr/cross-${target}"}
+
+export PATH="${toolchain_dir}/bin:$PATH"
+
+pkg_build() {
+	tar -xvf "binutils-${pkg_version}.tar.xz"
+	cd "binutils-${pkg_version}"
+
+	sed '6031s/$add_dir//' -i ltmain.sh
+
+	mkdir -pv build
+	cd build
+
+	../configure                      \
+		--prefix=/usr             \
+		--build=`../config.guess` \
+		--host="$target"          \
+		--disable-nls             \
+		--enable-shared           \
+		--enable-gprofng=no       \
+		--disable-werror          \
+		--enable-64-bit-bfd       \
+		--enable-new-dtags        \
+		--enable-default-hash-style=gnu
+
+	make -j "$jobs"
+	make DESTDIR="$destdir" install
+
+	rm -v "${destdir}/usr/lib/libbfd.a" "${destdir}/usr/lib/libbfd.la"
+	rm -v "${destdir}/usr/lib/libctf.a" "${destdir}/usr/lib/libctf.la"
+	rm -v "${destdir}/usr/lib/libctf-nobfd.a" "${destdir}/usr/lib/libctf-nobfd.la"
+	rm -v "${destdir}/usr/lib/libopcodes.a" "${destdir}/usr/lib/libopcodes.la"
+	rm -v "${destdir}/usr/lib/libsframe.a" "${destdir}/usr/lib/libsframe.la"
+}

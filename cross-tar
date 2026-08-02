@@ -1,0 +1,23 @@
+# Package information:
+: ${pkg_name:=tar}
+: ${pkg_version:=1.35}
+: ${pkg_build:=0-pre1}
+: ${pkg_dist:="tar-${pkg_version}.tar.xz"}
+: ${pkg_bdeps:=NIL}
+: ${pkg_rdeps:=NIL}
+
+# Environment variables:
+: ${jobs:=1}
+: ${target:=x86_64-linux-gnu}
+: ${toolchain_dir:="/usr/cross-${target}"}
+
+export PATH="${toolchain_dir}/bin:$PATH"
+
+pkg_build() {
+	tar -xvf "tar-${pkg_version}.tar.xz"
+	cd "tar-${pkg_version}"
+
+	./configure --prefix=/usr --host="$target" --build=`./build-aux/config.guess`
+	make -j "$jobs"
+	make DESTDIR="$destdir" install
+}

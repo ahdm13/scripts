@@ -1,0 +1,23 @@
+# Package information:
+: ${pkg_name:=grep}
+: ${pkg_version:=3.12}
+: ${pkg_build:=0-pre1}
+: ${pkg_dist:="grep-${pkg_version}.tar.xz"}
+: ${pkg_bdeps:=NIL}
+: ${pkg_rdeps:=NIL}
+
+# Environment variables:
+: ${jobs:=1}
+: ${target:=x86_64-linux-gnu}
+: ${toolchain_dir:="/usr/cross-${target}"}
+
+export PATH="${toolchain_dir}/bin:$PATH"
+
+pkg_build() {
+	tar -xvf "grep-${pkg_version}.tar.xz"
+	cd "grep-${pkg_version}"
+
+	./configure --prefix=/usr --host="$target" --build=`./build-aux/config.guess`
+	make -j "$jobs"
+	make DESTDIR="$destdir" install
+}

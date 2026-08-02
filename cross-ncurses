@@ -1,0 +1,38 @@
+# Package information:
+: ${pkg_name:=ncurses}
+: ${pkg_version:=6.6}
+: ${pkg_build:=0-pre1}
+: ${pkg_dist:="ncurses-${pkg_version}.tar.gz"}
+: ${pkg_bdeps:=NIL}
+: ${pkg_rdeps:=NIL}
+
+# Environment variables:
+: ${jobs:=1}
+: ${target:=x86_64-linux-gnu}
+: ${toolchain_dir:="/usr/cross-${target}"}
+
+export PATH="${toolchain_dir}/bin:$PATH"
+
+pkg_build() {
+	tar -xvf "ncurses-${pkg_version}.tar.gz"
+	cd "ncurses-${pkg_version}"
+
+	./configure                          \
+		--prefix=/usr                \
+		--host="$target"             \
+		--build=`./config.guess`     \
+		--mandir=/usr/share/man      \
+		--with-manpage-format=normal \
+		--with-shared                \
+		--without-normal             \
+		--with-cxx-shared            \
+		--without-debug              \
+		--without-ada                \
+		--disable-stripping
+
+	make -j "$jobs"
+	make DESTDIR="$destdir" install
+
+	ln -svf libncursesw.so "${destdir}/usr/lib/libncurses.so"
+	sed -e 's/^#if.*XOPEN.*$/#if 1/' -i "${destdir}/usr/include/curses.h"
+}

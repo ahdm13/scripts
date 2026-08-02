@@ -1,0 +1,33 @@
+# Package information:
+: ${pkg_name:=file}
+: ${pkg_version:=5.46}
+: ${pkg_build:=0-pre1}
+: ${pkg_dist:="file-${pkg_version}.tar.gz"}
+: ${pkg_bdeps:=NIL}
+: ${pkg_rdeps:=NIL}
+
+# Environment variables:
+: ${jobs:=1}
+: ${target:=x86_64-linux-gnu}
+: ${toolchain_dir:="/usr/cross-${target}"}
+
+export PATH="${toolchain_dir}/bin:$PATH"
+
+pkg_build() {
+	tar -xvf "file-${pkg_version}.tar.gz"
+	cd "file-${pkg_version}"
+
+	mkdir -pv build
+	cd build
+
+	../configure --disable-bzlib --disable-libseccomp --disable-xzlib --disable-zlib
+	make -j "$jobs"
+
+	cd ..
+
+	./configure --prefix=/usr --host="$target" --build=`./config.guess`
+	make -j "$jobs" FILE_COMPILE=`pwd`/build/src/file
+	make DESTDIR="$destdir" install
+
+	rm -v "${destdir}/usr/lib/libmagic.la"
+}

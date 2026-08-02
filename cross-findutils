@@ -1,0 +1,23 @@
+# Package information:
+: ${pkg_name:=findutils}
+: ${pkg_version:=4.10.0}
+: ${pkg_build:=0-pre1}
+: ${pkg_dist:="findutils-${pkg_version}.tar.xz"}
+: ${pkg_bdeps:=NIL}
+: ${pkg_rdeps:=NIL}
+
+# Environment variables:
+: ${jobs:=1}
+: ${target:=x86_64-linux-gnu}
+: ${toolchain_dir:="/usr/cross-${target}"}
+
+export PATH="${toolchain_dir}/bin:$PATH"
+
+pkg_build() {
+	tar -xvf "findutils-${pkg_version}.tar.xz"
+	cd "findutils-${pkg_version}"
+
+	./configure --prefix=/usr --host="$target" --build=`./build-aux/config.guess` --localstatedir=/var/lib/locate
+	make -j "$jobs"
+	make DESTDIR="$destdir" install
+}

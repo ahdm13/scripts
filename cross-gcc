@@ -1,0 +1,64 @@
+# Package information:
+: ${pkg_name:=gcc}
+: ${pkg_version:=15.2.0}
+: ${pkg_build:=0-pre1}
+
+: ${gmp_version:=6.3.0}
+: ${mpc_version:=1.3.1}
+: ${mpfr_version:=4.2.2}
+
+: ${pkg_dist="gcc-${pkg_version}.tar.xz
+gmp-${gmp_version}.tar.xz
+mpc-${mpc_version}.tar.gz
+mpfr-${mpfr_version}.tar.xz"}
+: ${pkg_bdeps:=NIL}
+: ${pkg_rdeps:=NIL}
+
+# Environment variables:
+: ${jobs:=1}
+: ${target:=x86_64-linux-gnu}
+: ${toolchain_dir:="/usr/cross-${target}"}
+: ${sysroot:=/sysroot}
+
+export PATH="${toolchain_dir}/bin:$PATH"
+
+pkg_build() {
+	tar -xvf "gcc-${pkg_version}.tar.xz"
+	tar -xvf "gmp-${gmp_version}.tar.xz"
+	tar -xvf "mpc-${mpc_version}.tar.gz"
+	tar -xvf "mpfr-${mpfr_version}.tar.xz"
+
+	cd "gcc-${pkg_version}"
+
+	ln -svf "../gmp-${gmp_version}" gmp
+	ln -svf "../mpc-${mpc_version}" mpc
+	ln -svf "../mpfr-${mpfr_version}" mpfr
+
+	sed -e '/m64=/s/lib64/lib/' -i.orig gcc/config/i386/t-linux64
+	sed -e '/thread_header =/s/@.*@/gthr-posix.h/' -i libgcc/Makefile.in libstdc++-v3/include/Makefile.in
+
+	mkdir -pv build
+	cd build
+
+	../configure                                    \
+		--build=`../config.guess`               \
+		--host="$target"                        \
+		--target="$target"                      \
+		--prefix=/usr                           \
+		--with-build-sysroot="$sysroot"         \
+		--enable-default-pie                    \
+		--enable-default-ssp                    \
+		--disable-nls                           \
+		--disable-multilib                      \
+		--disable-libatomic                     \
+		--disable-libgomp                       \
+		--disable-libquadmath                   \
+		--disable-libsanitizer                  \
+		--disable-libssp                        \
+		--disable-libvtv                        \
+		--enable-languages=c,c++                \
+		LDFLAGS_FOR_TARGET="-L${PWD}/${target}/libgcc"
+
+	make -j "$jobs"
+	make DESTDIR="$destdir" install
+}

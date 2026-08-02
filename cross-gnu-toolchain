@@ -1,0 +1,200 @@
+# Package information:
+: ${pkg_name:=cross-gnu-toolchain}
+: ${pkg_version:=1.0}
+: ${pkg_build:=0-pre1}
+
+: ${binutils_version:=2.46.0}
+: ${gcc_version:=15.2.0}
+: ${glibc_version:=2.43}
+: ${gmp_version:=6.3.0}
+: ${linux_version:=6.18.10}
+: ${mpc_version:=1.3.1}
+: ${mpfr_version:=4.2.2}
+
+: ${pkg_dist="binutils-${binutils_version}.tar.xz
+gcc-${gcc_version}.tar.xz
+glibc-${glibc_version}.tar.xz
+glibc-fhs-1.patch
+gmp-${gmp_version}.tar.xz
+linux-${linux_version}.tar.xz
+mpc-${mpc_version}.tar.gz
+mpfr-${mpfr_version}.tar.xz"}
+: ${pkg_bdeps:=NIL}
+: ${pkg_rdeps:=NIL}
+
+: ${pkg_supports_destdir:=no}
+
+# Environment variables:
+: ${jobs:=1}
+: ${target:=x86_64-linux-gnu}
+: ${toolchain_dir:="/usr/cross-${target}"}
+: ${sysroot:=/sysroot}
+
+export PATH="${toolchain_dir}/bin:$PATH"
+
+pkg_build() {
+	rm -rvf "$toolchain_dir"
+	mkdir -pv "$toolchain_dir"
+
+	ln -sf . "${toolchain_dir}/usr"
+
+	build_binutils
+	build_gcc
+	build_linux_headers
+	build_glibc
+	build_libstdcxx
+}
+
+build_binutils() {
+	tar -xvf "binutils-${binutils_version}.tar.xz"
+
+	mkdir -pv "binutils-${binutils_version}/build"
+	cd "binutils-${binutils_version}/build"
+
+	../configure                      \
+		--prefix="$toolchain_dir" \
+		--with-sysroot="$sysroot" \
+		--target="$target"        \
+		--disable-nls             \
+		--enable-gprofng=no       \
+		--disable-werror          \
+		--enable-new-dtags        \
+		--enable-default-hash-style=gnu
+
+	make -j "$jobs"
+	make install
+
+	cd "$build_root"
+	rm -rvf "binutils-${binutils_version}"
+}
+
+build_gcc() {
+	tar -xvf "gcc-${gcc_version}.tar.xz"
+	tar -xvf "gmp-${gmp_version}.tar.xz"
+	tar -xvf "mpc-${mpc_version}.tar.gz"
+	tar -xvf "mpfr-${mpfr_version}.tar.xz"
+
+	cd "gcc-${gcc_version}"
+
+	ln -svf "../gmp-${gmp_version}" gmp
+	ln -svf "../mpc-${mpc_version}" mpc
+	ln -svf "../mpfr-${mpfr_version}" mpfr
+
+	sed -e '/m64=/s/lib64/lib/' -i.orig gcc/config/i386/t-linux64
+
+	mkdir -pv build
+	cd build
+
+	../configure                                    \
+		--target="$target"                      \
+		--prefix="$toolchain_dir"               \
+		--with-glibc-version="$glibc_version"   \
+		--with-sysroot="$sysroot"               \
+		--with-newlib                           \
+		--enable-default-pie                    \
+		--enable-default-ssp                    \
+		--disable-nls                           \
+		--disable-shared                        \
+		--disable-multilib                      \
+		--disable-threads                       \
+		--disable-libatomic                     \
+		--disable-libgomp                       \
+		--disable-libquadmath                   \
+		--disable-libssp                        \
+		--disable-libvtv                        \
+		--disable-libstdcxx                     \
+		--enable-languages=c,c++
+
+	make -j "$jobs"
+	make install
+
+	cd ..
+
+	libgcc_dir=`"${toolchain_dir}/bin/${target}-gcc" -print-libgcc-file-name`
+	libgcc_dir=`dirname "$libgcc_dir"`
+	cat gcc/limitx.h gcc/glimits.h gcc/limity.h > "${libgcc_dir}/include/limits.h"
+
+	cd "$build_root"
+
+	rm -rvf "gcc-${gcc_version}"
+	rm -rvf "gmp-${gmp_version}"
+	rm -rvf "mpc-${mpc_version}"
+	rm -rvf "mpfr-${mpfr_version}"
+}
+
+build_linux_headers() {
+	tar -xvf "linux-${linux_version}.tar.xz"
+
+	cd "linux-${linux_version}"
+
+	make mrproper
+	make clean
+
+	make -j "$jobs" headers
+	make INSTALL_HDR_PATH="${build_root}/kernel-headers-install/usr" headers_install
+
+	cd "$build_root"
+	rm -rvf "linux-${linux_version}"
+}
+
+build_glibc() {
+	tar -xvf "glibc-${glibc_version}.tar.xz"
+
+	mkdir -pv "${build_root}/glibc-install/lib64"
+
+	ln -svf ../usr/lib/ld-linux-x86-64.so.2 "${build_root}/glibc-install/lib64"
+	ln -svf ../usr/lib/ld-linux-x86-64.so.2 "${build_root}/glibc-install/lib64/ld-lsb-x86-64.so.3"
+
+	cd "glibc-${glibc_version}"
+
+	patch -Np1 -i ../glibc-fhs-1.patch
+
+	mkdir -pv build
+	cd build
+
+	echo "rootsbindir=/usr/sbin" > configparms
+	../configure                              \
+		--prefix=/usr                     \
+		--host="${target}"                \
+		--build=`../scripts/config.guess` \
+		--disable-nscd                    \
+		libc_cv_slibdir=/usr/lib          \
+		--enable-kernel=5.4               \
+		--with-headers="${build_root}/kernel-headers-install/usr/include"
+
+	make -j 1
+	make DESTDIR="${build_root}/glibc-install" install
+
+	sed '/RTLDLIST=/s@/usr@@g' -i "${build_root}/glibc-install/usr/bin/ldd"
+
+	cd "$build_root"
+	rm -rvf "glibc-${glibc_version}"
+}
+
+build_libstdcxx() {
+	tar -xvf "gcc-${gcc_version}.tar.xz"
+
+	mkdir -pv "gcc-${gcc_version}/build"
+	cd "gcc-${gcc_version}/build"
+
+	../libstdc++-v3/configure                   \
+		--host="$target"                    \
+		--build=`../config.guess`           \
+		--prefix=/usr                       \
+		--disable-multilib                  \
+		--disable-nls                       \
+		--disable-libstdcxx-pch             \
+		--with-gxx-include-dir=/gxx-include \
+		CFLAGS="-B${build_root}/glibc-install/usr/lib" \
+		CPPFLAGS="-I${build_root}/kernel-headers-install/usr/include -I${build_root}/glibc-install/usr/include" \
+		LDFLAGS="-Wl,--sysroot=${build_root}/glibc-install"
+
+	make -j "${jobs}"
+	make DESTDIR="${build_root}/libstdcxx-install" install
+
+	mkdir -pv "${toolchain_dir}/${target}/include/c++"
+	rm -rvf "${toolchain_dir}/${target}/include/c++/${gcc_version}"
+	mv -v "${build_root}/libstdcxx-install/gxx-include" "${toolchain_dir}/${target}/include/c++/${gcc_version}"
+
+	rm -rvf "gcc-${gcc_version}"
+}

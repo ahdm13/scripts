@@ -1,0 +1,23 @@
+# Package information:
+: ${pkg_name:=gzip}
+: ${pkg_version:=1.14}
+: ${pkg_build:=0-pre1}
+: ${pkg_dist:="gzip-${pkg_version}.tar.xz"}
+: ${pkg_bdeps:=NIL}
+: ${pkg_rdeps:=NIL}
+
+# Environment variables:
+: ${jobs:=1}
+: ${target:=x86_64-linux-gnu}
+: ${toolchain_dir:="/usr/cross-${target}"}
+
+export PATH="${toolchain_dir}/bin:$PATH"
+
+pkg_build() {
+	tar -xvf "gzip-${pkg_version}.tar.xz"
+	cd "gzip-${pkg_version}"
+
+	./configure --prefix=/usr --host="$target"
+	make -j "$jobs"
+	make DESTDIR="$destdir" install
+}

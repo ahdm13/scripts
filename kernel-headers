@@ -1,0 +1,21 @@
+# Package information:
+: ${pkg_name:=kernel-headers}
+: ${pkg_version:=6.18.10}
+: ${pkg_build:=1-main}
+: ${pkg_dist:=linux-${pkg_version}.tar.xz}
+: ${pkg_bdeps:=NIL}
+: ${pkg_rdeps:=NIL}
+
+# Environment variables:
+: ${jobs:=1}
+
+pkg_build() {
+	tar -xvf "linux-${pkg_version}.tar.xz"
+	cd "linux-${pkg_version}"
+
+	make mrproper
+	make clean
+
+	make -j "$jobs" headers
+	make INSTALL_HDR_PATH="${destdir}/usr" headers_install
+}

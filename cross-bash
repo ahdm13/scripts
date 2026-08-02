@@ -1,0 +1,28 @@
+# Package information:
+: ${pkg_name:=bash}
+: ${pkg_version:=5.3}
+: ${pkg_build:=0-pre1}
+: ${pkg_dist:="bash-${pkg_version}.tar.gz"}
+: ${pkg_bdeps:=NIL}
+: ${pkg_rdeps:=NIL}
+
+# Environment variables:
+: ${jobs:=1}
+: ${target:=x86_64-linux-gnu}
+: ${toolchain_dir:="/usr/cross-${target}"}
+
+export PATH="${toolchain_dir}/bin:$PATH"
+
+pkg_build() {
+	tar -xvf "bash-${pkg_version}.tar.gz"
+	cd "bash-${pkg_version}"
+
+	./configure                                 \
+		--prefix=/usr                       \
+		--build=`sh ./support/config.guess` \
+		--host="$target"                    \
+		--without-bash-malloc
+
+	make -j "$jobs"
+	make DESTDIR="$destdir" install
+}
