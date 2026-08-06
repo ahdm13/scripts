@@ -2,7 +2,7 @@
 : ${name:=binutils}
 : ${version:=2.46.0}
 : ${build:=0-pre1}
-: ${dists:="binutils-${pkg_version}.tar.xz"}
+: ${dists:="binutils-${version}.tar.xz"}
 : ${bdeps:=NIL}
 : ${supports_destdir=YES}
 
@@ -15,8 +15,8 @@
 export PATH="${toolchain_dir}/bin:$PATH"
 
 build() {
-	tar -xvf "binutils-${pkg_version}.tar.xz"
-	cd "binutils-${pkg_version}"
+	tar -xvf "binutils-${version}.tar.xz"
+	cd "binutils-${version}"
 
 	sed '6031s/$add_dir//' -i ltmain.sh
 
