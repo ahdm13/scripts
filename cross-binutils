@@ -1,19 +1,20 @@
 # Package information:
-: ${pkg_name:=binutils}
-: ${pkg_version:=2.46.0}
-: ${pkg_build:=0-pre1}
-: ${pkg_dist:="binutils-${pkg_version}.tar.xz"}
-: ${pkg_bdeps:=NIL}
-: ${pkg_rdeps:=NIL}
+: ${name:=binutils}
+: ${version:=2.46.0}
+: ${build:=0-pre1}
+: ${dists:="binutils-${pkg_version}.tar.xz"}
+: ${bdeps:=NIL}
+: ${supports_destdir=YES}
 
 # Environment variables:
 : ${jobs:=1}
 : ${target:=x86_64-linux-gnu}
 : ${toolchain_dir:="/usr/cross-${target}"}
+: ${destdir:=/}
 
 export PATH="${toolchain_dir}/bin:$PATH"
 
-pkg_build() {
+build() {
 	tar -xvf "binutils-${pkg_version}.tar.xz"
 	cd "binutils-${pkg_version}"
 
