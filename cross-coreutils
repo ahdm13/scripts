@@ -1,10 +1,10 @@
 # Package information:
-: ${pkg_name:=coreutils}
-: ${pkg_version:=9.10}
-: ${pkg_build:=0-pre1}
-: ${pkg_dist:="coreutils-${pkg_version}.tar.xz"}
-: ${pkg_bdeps:=NIL}
-: ${pkg_rdeps:=NIL}
+: ${name:=coreutils}
+: ${version:=9.10}
+: ${build:=0-pre1}
+: ${dists:="coreutils-${version}.tar.xz"}
+: ${bdeps:=NIL}
+: ${supports_destdir:=YES}
 
 # Environment variables:
 : ${jobs:=1}
@@ -13,9 +13,9 @@
 
 export PATH="${toolchain_dir}/bin:$PATH"
 
-pkg_build() {
-	tar -xvf "$pkg_dist"
-	cd "coreutils-${pkg_version}"
+build() {
+	tar -xvf "$dists"
+	cd "coreutils-${version}"
 
 	./configure                                \
 		--prefix=/usr                      \

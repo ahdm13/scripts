@@ -1,10 +1,10 @@
 # Package information:
-: ${pkg_name:=xz}
-: ${pkg_version:=5.8.2}
-: ${pkg_build:=0-pre1}
-: ${pkg_dist:="xz-${pkg_version}.tar.xz"}
-: ${pkg_bdeps:=NIL}
-: ${pkg_rdeps:=NIL}
+: ${name:=xz}
+: ${version:=5.8.2}
+: ${build:=0-pre1}
+: ${dists:="xz-${version}.tar.xz"}
+: ${bdeps:=NIL}
+: ${supports_destdir:=YES}
 
 # Environment variables:
 : ${jobs:=1}
@@ -13,11 +13,11 @@
 
 export PATH="${toolchain_dir}/bin:$PATH"
 
-pkg_build() {
-	tar -xvf "xz-${pkg_version}.tar.xz"
-	cd "xz-${pkg_version}"
+build() {
+	tar -xvf "xz-${version}.tar.xz"
+	cd "xz-${version}"
 
-	./configure --prefix=/usr --host="$target" --build=`./build-aux/config.guess` --disable-static --docdir="/usr/share/doc/xz-${pkg_version}"
+	./configure --prefix=/usr --host="$target" --build=`./build-aux/config.guess` --disable-static --docdir="/usr/share/doc/xz-${version}"
 	make -j "$jobs"
 	make DESTDIR="$destdir" install
 

@@ -1,10 +1,10 @@
 # Package information:
-: ${pkg_name:=file}
-: ${pkg_version:=5.46}
-: ${pkg_build:=0-pre1}
-: ${pkg_dist:="file-${pkg_version}.tar.gz"}
-: ${pkg_bdeps:=NIL}
-: ${pkg_rdeps:=NIL}
+: ${name:=file}
+: ${version:=5.46}
+: ${build:=0-pre1}
+: ${dists:="file-${version}.tar.gz"}
+: ${bdeps:=NIL}
+: ${supports_destdir:=YES}
 
 # Environment variables:
 : ${jobs:=1}
@@ -13,9 +13,9 @@
 
 export PATH="${toolchain_dir}/bin:$PATH"
 
-pkg_build() {
-	tar -xvf "file-${pkg_version}.tar.gz"
-	cd "file-${pkg_version}"
+build() {
+	tar -xvf "file-${version}.tar.gz"
+	cd "file-${version}"
 
 	mkdir -pv build
 	cd build

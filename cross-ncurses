@@ -1,10 +1,10 @@
 # Package information:
-: ${pkg_name:=ncurses}
-: ${pkg_version:=6.6}
-: ${pkg_build:=0-pre1}
-: ${pkg_dist:="ncurses-${pkg_version}.tar.gz"}
-: ${pkg_bdeps:=NIL}
-: ${pkg_rdeps:=NIL}
+: ${name:=ncurses}
+: ${version:=6.6}
+: ${build:=0-pre1}
+: ${dists:="ncurses-${version}.tar.gz"}
+: ${bdeps:=NIL}
+: ${supports_destdir:=YES}
 
 # Environment variables:
 : ${jobs:=1}
@@ -13,9 +13,9 @@
 
 export PATH="${toolchain_dir}/bin:$PATH"
 
-pkg_build() {
-	tar -xvf "ncurses-${pkg_version}.tar.gz"
-	cd "ncurses-${pkg_version}"
+build() {
+	tar -xvf "ncurses-${version}.tar.gz"
+	cd "ncurses-${version}"
 
 	./configure                          \
 		--prefix=/usr                \

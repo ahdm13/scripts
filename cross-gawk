@@ -1,10 +1,10 @@
 # Package information:
-: ${pkg_name:=gawk}
-: ${pkg_version:=5.3.2}
-: ${pkg_build:=0-pre1}
-: ${pkg_dist:="gawk-${pkg_version}.tar.xz"}
-: ${pkg_bdeps:=NIL}
-: ${pkg_rdeps:=NIL}
+: ${name:=gawk}
+: ${version:=5.3.2}
+: ${build:=0-pre1}
+: ${dists:="gawk-${version}.tar.xz"}
+: ${bdeps:=NIL}
+: ${supports_destdir:=YES}
 
 # Environment variables:
 : ${jobs:=1}
@@ -13,9 +13,9 @@
 
 export PATH="${toolchain_dir}/bin:$PATH"
 
-pkg_build() {
-	tar -xvf "gawk-${pkg_version}.tar.xz"
-	cd "gawk-${pkg_version}"
+build() {
+	tar -xvf "gawk-${version}.tar.xz"
+	cd "gawk-${version}"
 
 	sed -i 's/extras//' Makefile.in
 	./configure --prefix=/usr --host="$target" --build=`./build-aux/config.guess`

@@ -1,12 +1,12 @@
 # Package information:
-: ${pkg_name:=glibc}
-: ${pkg_version:=2.43}
-: ${pkg_build:=0-pre1}
+: ${name:=glibc}
+: ${version:=2.43}
+: ${build:=0-pre1}
 
-: ${pkg_dist="glibc-${pkg_version}.tar.xz
+: ${dists="glibc-${version}.tar.xz
 glibc-fhs-1.patch"}
-: ${pkg_bdeps:=NIL}
-: ${pkg_rdeps:=NIL}
+: ${bdeps:=NIL}
+: ${supports_destdir:=YES}
 
 # Environment variables:
 : ${target:=x86_64-linux-gnu}
@@ -14,15 +14,15 @@ glibc-fhs-1.patch"}
 
 export PATH="${toolchain_dir}/bin:$PATH"
 
-pkg_build() {
-	tar -xvf "glibc-${pkg_version}.tar.xz"
+build() {
+	tar -xvf "glibc-${version}.tar.xz"
 
 	mkdir -pv "${destdir}/lib64"
 
 	ln -svf ../usr/lib/ld-linux-x86-64.so.2 "${destdir}/lib64"
 	ln -svf ../usr/lib/ld-linux-x86-64.so.2 "${destdir}/lib64/ld-lsb-x86-64.so.3"
 
-	cd "glibc-${pkg_version}"
+	cd "glibc-${version}"
 
 	patch -Np1 -i ../glibc-fhs-1.patch
 

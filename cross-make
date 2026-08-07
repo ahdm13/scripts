@@ -1,10 +1,10 @@
 # Package information:
-: ${pkg_name:=make}
-: ${pkg_version:=4.4.1}
-: ${pkg_build:=0-pre1}
-: ${pkg_dist:="make-${pkg_version}.tar.gz"}
-: ${pkg_bdeps:=NIL}
-: ${pkg_rdeps:=NIL}
+: ${name:=make}
+: ${version:=4.4.1}
+: ${build:=0-pre1}
+: ${dists:="make-${version}.tar.gz"}
+: ${bdeps:=NIL}
+: ${supports_destdir:=YES}
 
 # Environment variables:
 : ${jobs:=1}
@@ -13,9 +13,9 @@
 
 export PATH="${toolchain_dir}/bin:$PATH"
 
-pkg_build() {
-	tar -xvf "make-${pkg_version}.tar.gz"
-	cd "make-${pkg_version}"
+build() {
+	tar -xvf "make-${version}.tar.gz"
+	cd "make-${version}"
 
 	./configure --prefix=/usr --host="$target" --build=`./build-aux/config.guess`
 	make -j "$jobs"

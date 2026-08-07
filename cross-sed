@@ -1,10 +1,10 @@
 # Package information:
-: ${pkg_name:=sed}
-: ${pkg_version:=4.9}
-: ${pkg_build:=0-pre1}
-: ${pkg_dist:="sed-${pkg_version}.tar.xz"}
-: ${pkg_bdeps:=NIL}
-: ${pkg_rdeps:=NIL}
+: ${name:=sed}
+: ${version:=4.9}
+: ${build:=0-pre1}
+: ${dists:="sed-${version}.tar.xz"}
+: ${bdeps:=NIL}
+: ${supports_destdir:=YES}
 
 # Environment variables:
 : ${jobs:=1}
@@ -13,9 +13,9 @@
 
 export PATH="${toolchain_dir}/bin:$PATH"
 
-pkg_build() {
-	tar -xvf "sed-${pkg_version}.tar.xz"
-	cd "sed-${pkg_version}"
+build() {
+	tar -xvf "sed-${version}.tar.xz"
+	cd "sed-${version}"
 
 	./configure --prefix=/usr --host="$target" --build=`./build-aux/config.guess`
 	make -j "$jobs"

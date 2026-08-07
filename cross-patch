@@ -1,10 +1,10 @@
 # Package information:
-: ${pkg_name:=patch}
-: ${pkg_version:=2.8}
-: ${pkg_build:=0-pre1}
-: ${pkg_dist:="patch-${pkg_version}.tar.xz"}
-: ${pkg_bdeps:=NIL}
-: ${pkg_rdeps:=NIL}
+: ${name:=patch}
+: ${version:=2.8}
+: ${build:=0-pre1}
+: ${dists:="patch-${version}.tar.xz"}
+: ${bdeps:=NIL}
+: ${supports_destdir:=YES}
 
 # Environment variables:
 : ${jobs:=1}
@@ -13,9 +13,9 @@
 
 export PATH="${toolchain_dir}/bin:$PATH"
 
-pkg_build() {
-	tar -xvf "patch-${pkg_version}.tar.xz"
-	cd "patch-${pkg_version}"
+build() {
+	tar -xvf "patch-${version}.tar.xz"
+	cd "patch-${version}"
 
 	./configure --prefix=/usr --host="$target" --build=`./build-aux/config.guess`
 	make -j "$jobs"

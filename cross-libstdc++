@@ -1,11 +1,11 @@
 # Package information:
-: ${pkg_name:=libstdc++}
-: ${pkg_version:=15.2.0}
-: ${pkg_build:=0-pre1}
+: ${name:=libstdc++}
+: ${version:=15.2.0}
+: ${build:=0-pre1}
 
-: ${pkg_dist="gcc-${pkg_version}.tar.xz"}
-: ${pkg_bdeps:=NIL}
-: ${pkg_rdeps:=NIL}
+: ${dists="gcc-${version}.tar.xz"}
+: ${bdeps:=NIL}
+: ${supports_destdir:=YES}
 
 # Environment variables:
 : ${jobs:=1}
@@ -15,11 +15,11 @@
 
 export PATH="${toolchain_dir}/bin:$PATH"
 
-pkg_build() {
-	tar -xvf "gcc-${pkg_version}.tar.xz"
+build() {
+	tar -xvf "gcc-${version}.tar.xz"
 
-	mkdir -pv "gcc-${pkg_version}/build"
-	cd "gcc-${pkg_version}/build"
+	mkdir -pv "gcc-${version}/build"
+	cd "gcc-${version}/build"
 
 	../libstdc++-v3/configure                   \
 		--host="$target"                    \

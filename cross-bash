@@ -1,10 +1,10 @@
 # Package information:
-: ${pkg_name:=bash}
-: ${pkg_version:=5.3}
-: ${pkg_build:=0-pre1}
-: ${pkg_dist:="bash-${pkg_version}.tar.gz"}
-: ${pkg_bdeps:=NIL}
-: ${pkg_rdeps:=NIL}
+: ${name:=bash}
+: ${version:=5.3}
+: ${build:=0-pre1}
+: ${dists:="bash-${version}.tar.gz"}
+: ${bdeps:=NIL}
+: ${supports_destdir:=YES}
 
 # Environment variables:
 : ${jobs:=1}
@@ -13,9 +13,9 @@
 
 export PATH="${toolchain_dir}/bin:$PATH"
 
-pkg_build() {
-	tar -xvf "bash-${pkg_version}.tar.gz"
-	cd "bash-${pkg_version}"
+build() {
+	tar -xvf "bash-${version}.tar.gz"
+	cd "bash-${version}"
 
 	./configure                                 \
 		--prefix=/usr                       \

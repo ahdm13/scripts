@@ -1,7 +1,7 @@
 # Package information:
-: ${pkg_name:=cross-gnu-toolchain}
-: ${pkg_version:=1.0}
-: ${pkg_build:=0-pre1}
+: ${name:=cross-gnu-toolchain}
+: ${version:=1.0}
+: ${build:=0-pre1}
 
 : ${binutils_version:=2.46.0}
 : ${gcc_version:=15.2.0}
@@ -11,7 +11,7 @@
 : ${mpc_version:=1.3.1}
 : ${mpfr_version:=4.2.2}
 
-: ${pkg_dist="binutils-${binutils_version}.tar.xz
+: ${dists="binutils-${binutils_version}.tar.xz
 gcc-${gcc_version}.tar.xz
 glibc-${glibc_version}.tar.xz
 glibc-fhs-1.patch
@@ -19,10 +19,8 @@ gmp-${gmp_version}.tar.xz
 linux-${linux_version}.tar.xz
 mpc-${mpc_version}.tar.gz
 mpfr-${mpfr_version}.tar.xz"}
-: ${pkg_bdeps:=NIL}
-: ${pkg_rdeps:=NIL}
-
-: ${pkg_supports_destdir:=no}
+: ${bdeps:=NIL}
+: ${supports_destdir:=NO}
 
 # Environment variables:
 : ${jobs:=1}
@@ -32,7 +30,7 @@ mpfr-${mpfr_version}.tar.xz"}
 
 export PATH="${toolchain_dir}/bin:$PATH"
 
-pkg_build() {
+build() {
 	rm -rvf "$toolchain_dir"
 	mkdir -pv "$toolchain_dir"
 

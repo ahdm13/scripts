@@ -1,10 +1,10 @@
 # Package information:
-: ${pkg_name:=tar}
-: ${pkg_version:=1.35}
-: ${pkg_build:=0-pre1}
-: ${pkg_dist:="tar-${pkg_version}.tar.xz"}
-: ${pkg_bdeps:=NIL}
-: ${pkg_rdeps:=NIL}
+: ${name:=tar}
+: ${version:=1.35}
+: ${build:=0-pre1}
+: ${dists:="tar-${version}.tar.xz"}
+: ${bdeps:=NIL}
+: ${supports_destdir:=YES}
 
 # Environment variables:
 : ${jobs:=1}
@@ -13,9 +13,9 @@
 
 export PATH="${toolchain_dir}/bin:$PATH"
 
-pkg_build() {
-	tar -xvf "tar-${pkg_version}.tar.xz"
-	cd "tar-${pkg_version}"
+build() {
+	tar -xvf "tar-${version}.tar.xz"
+	cd "tar-${version}"
 
 	./configure --prefix=/usr --host="$target" --build=`./build-aux/config.guess`
 	make -j "$jobs"

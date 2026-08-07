@@ -1,10 +1,10 @@
 # Package information:
-: ${pkg_name:=gzip}
-: ${pkg_version:=1.14}
-: ${pkg_build:=0-pre1}
-: ${pkg_dist:="gzip-${pkg_version}.tar.xz"}
-: ${pkg_bdeps:=NIL}
-: ${pkg_rdeps:=NIL}
+: ${name:=gzip}
+: ${version:=1.14}
+: ${build:=0-pre1}
+: ${dists:="gzip-${version}.tar.xz"}
+: ${bdeps:=NIL}
+: ${supports_destdir:=YES}
 
 # Environment variables:
 : ${jobs:=1}
@@ -13,9 +13,9 @@
 
 export PATH="${toolchain_dir}/bin:$PATH"
 
-pkg_build() {
-	tar -xvf "gzip-${pkg_version}.tar.xz"
-	cd "gzip-${pkg_version}"
+build() {
+	tar -xvf "gzip-${version}.tar.xz"
+	cd "gzip-${version}"
 
 	./configure --prefix=/usr --host="$target"
 	make -j "$jobs"
