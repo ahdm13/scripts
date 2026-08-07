@@ -170,6 +170,8 @@ build_glibc() {
 	make DESTDIR="${glibc_install}" install
 
 	sed '/RTLDLIST=/s@/usr@@g' -i "${glibc_install}/usr/bin/ldd"
+	sed 's?/usr/lib/??g' -i "${glibc_install}/usr/lib/libc.so"
+	sed 's?/usr/lib/??g' -i "${glibc_install}/usr/lib/libm.so"
 
 	cd "$build_root/build"
 	rm -rvf "glibc-${glibc_version}"
