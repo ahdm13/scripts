@@ -191,7 +191,7 @@ build_libstdcxx() {
 		--with-gxx-include-dir=/gxx-include \
 		CFLAGS="-B${glibc_install}/usr/lib" \
 		CPPFLAGS="-I${linux_headers_install}/usr/include -I${glibc_install}/usr/include" \
-		LDFLAGS="-L${glibc_install}"
+		LDFLAGS="-L${glibc_install}/usr/lib"
 
 	make -j "${jobs}"
 	make DESTDIR="${libstdcxx_install}" install
