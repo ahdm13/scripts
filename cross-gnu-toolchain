@@ -27,6 +27,7 @@ mpfr-${mpfr_version}.tar.xz"}
 : ${target:=x86_64-linux-gnu}
 : ${toolchain_dir:="/usr/cross-${target}"}
 : ${sysroot:=/sysroot}
+: ${libstdcxx_install:="/usr/libstdcxx-install"}
 
 export PATH="${toolchain_dir}/bin:$PATH"
 
@@ -188,11 +189,11 @@ build_libstdcxx() {
 		LDFLAGS="-Wl,--sysroot=${build_root}/glibc-install"
 
 	make -j "${jobs}"
-	make DESTDIR="${build_root}/libstdcxx-install" install
+	make DESTDIR="${libstcxx_install}" install
 
 	mkdir -pv "${toolchain_dir}/${target}/include/c++"
 	rm -rvf "${toolchain_dir}/${target}/include/c++/${gcc_version}"
-	mv -v "${build_root}/libstdcxx-install/gxx-include" "${toolchain_dir}/${target}/include/c++/${gcc_version}"
+	mv -v "${libstcxx_install}/gxx-include" "${toolchain_dir}/${target}/include/c++/${gcc_version}"
 
 	cd "${build_root}/build"
 	rm -rvf "gcc-${gcc_version}"
