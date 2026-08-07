@@ -35,6 +35,9 @@ export PATH="${toolchain_dir}/bin:$PATH"
 
 build() {
 	rm -rvf "$toolchain_dir"
+	rm -rvf "${linux_headers_install}"
+	rm -rvf "${glibc_install}"
+	rm -rvf "${libstdcxx_install}"
 	mkdir -pv "$toolchain_dir"
 
 	ln -sf . "${toolchain_dir}/usr"
@@ -188,7 +191,7 @@ build_libstdcxx() {
 		--with-gxx-include-dir=/gxx-include \
 		CFLAGS="-B${glibc_install}/usr/lib" \
 		CPPFLAGS="-I${linux_headers_install}/usr/include -I${glibc_install}/usr/include" \
-		LDFLAGS="-Wl,--sysroot=${glibc_install}"
+		LDFLAGS="-L${glibc_install}"
 
 	make -j "${jobs}"
 	make DESTDIR="${libstdcxx_install}" install
