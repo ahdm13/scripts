@@ -62,7 +62,7 @@ build_binutils() {
 	make -j "$jobs"
 	make install
 
-	cd "$build_root"
+	cd "$build_root/build"
 	rm -rvf "binutils-${binutils_version}"
 }
 
@@ -112,7 +112,7 @@ build_gcc() {
 	libgcc_dir=`dirname "$libgcc_dir"`
 	cat gcc/limitx.h gcc/glimits.h gcc/limity.h > "${libgcc_dir}/include/limits.h"
 
-	cd "$build_root"
+	cd "$build_root/build"
 
 	rm -rvf "gcc-${gcc_version}"
 	rm -rvf "gmp-${gmp_version}"
@@ -131,7 +131,7 @@ build_linux_headers() {
 	make -j "$jobs" headers
 	make INSTALL_HDR_PATH="${build_root}/kernel-headers-install/usr" headers_install
 
-	cd "$build_root"
+	cd "$build_root/build"
 	rm -rvf "linux-${linux_version}"
 }
 
@@ -165,7 +165,7 @@ build_glibc() {
 
 	sed '/RTLDLIST=/s@/usr@@g' -i "${build_root}/glibc-install/usr/bin/ldd"
 
-	cd "$build_root"
+	cd "$build_root/build"
 	rm -rvf "glibc-${glibc_version}"
 }
 
@@ -194,5 +194,6 @@ build_libstdcxx() {
 	rm -rvf "${toolchain_dir}/${target}/include/c++/${gcc_version}"
 	mv -v "${build_root}/libstdcxx-install/gxx-include" "${toolchain_dir}/${target}/include/c++/${gcc_version}"
 
+	cd "${build_root/build}"
 	rm -rvf "gcc-${gcc_version}"
 }
