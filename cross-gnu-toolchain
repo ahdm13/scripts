@@ -27,7 +27,9 @@ mpfr-${mpfr_version}.tar.xz"}
 : ${target:=x86_64-linux-gnu}
 : ${toolchain_dir:="/usr/cross-${target}"}
 : ${sysroot:=/sysroot}
-: ${libstdcxx_install:="/usr/libstdcxx-install"}
+: ${linux_headers_install:="${build_root}/linux-headers-install"}
+: ${glibc_install:="${build_root}/glibc-install"}
+: ${libstdcxx_install:="${build_root}/libstdcxx-install"}
 
 export PATH="${toolchain_dir}/bin:$PATH"
 
@@ -130,7 +132,7 @@ build_linux_headers() {
 	make clean
 
 	make -j "$jobs" headers
-	make INSTALL_HDR_PATH="${build_root}/kernel-headers-install/usr" headers_install
+	make INSTALL_HDR_PATH="${linux_headers_install}/usr" headers_install
 
 	cd "$build_root/build"
 	rm -rvf "linux-${linux_version}"
@@ -139,10 +141,10 @@ build_linux_headers() {
 build_glibc() {
 	tar -xvf "glibc-${glibc_version}.tar.xz"
 
-	mkdir -pv "${build_root}/glibc-install/lib64"
+	mkdir -pv "${glibc_install}/lib64"
 
-	ln -svf ../usr/lib/ld-linux-x86-64.so.2 "${build_root}/glibc-install/lib64"
-	ln -svf ../usr/lib/ld-linux-x86-64.so.2 "${build_root}/glibc-install/lib64/ld-lsb-x86-64.so.3"
+	ln -svf ../usr/lib/ld-linux-x86-64.so.2 "${glibc_install}/lib64"
+	ln -svf ../usr/lib/ld-linux-x86-64.so.2 "${glibc_install}/lib64/ld-lsb-x86-64.so.3"
 
 	cd "glibc-${glibc_version}"
 
@@ -159,12 +161,12 @@ build_glibc() {
 		--disable-nscd                    \
 		libc_cv_slibdir=/usr/lib          \
 		--enable-kernel=5.4               \
-		--with-headers="${build_root}/kernel-headers-install/usr/include"
+		--with-headers="${linux_headers_install}/usr/include"
 
 	make -j 1
-	make DESTDIR="${build_root}/glibc-install" install
+	make DESTDIR="${glibc_install}" install
 
-	sed '/RTLDLIST=/s@/usr@@g' -i "${build_root}/glibc-install/usr/bin/ldd"
+	sed '/RTLDLIST=/s@/usr@@g' -i "${glibc_install}/usr/bin/ldd"
 
 	cd "$build_root/build"
 	rm -rvf "glibc-${glibc_version}"
@@ -184,9 +186,9 @@ build_libstdcxx() {
 		--disable-nls                       \
 		--disable-libstdcxx-pch             \
 		--with-gxx-include-dir=/gxx-include \
-		CFLAGS="-B${build_root}/glibc-install/usr/lib" \
-		CPPFLAGS="-I${build_root}/kernel-headers-install/usr/include -I${build_root}/glibc-install/usr/include" \
-		LDFLAGS="-Wl,--sysroot=${build_root}/glibc-install"
+		CFLAGS="-B${glibc_install}/usr/lib" \
+		CPPFLAGS="-I${linux_headers_install}/usr/include -I${glibc_install}/usr/include" \
+		LDFLAGS="-Wl,--sysroot=${glibc_install}"
 
 	make -j "${jobs}"
 	make DESTDIR="${libstcxx_install}" install
