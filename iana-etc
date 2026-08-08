@@ -1,0 +1,17 @@
+# Package information:
+: ${name:=iana-etc}
+: ${version:=20260202}
+: ${build:=1-main1}
+: ${dists:="iana-etc-${version}.tar.gz"}
+: ${bdeps:=}
+
+# Environment variables:
+: ${jobs:=1}
+
+build() {
+	tar -xvf "iana-etc-${version}.tar.gz"
+	cd "iana-etc-${version}"
+
+	mkdir -p "${destdir}/etc"
+	cp -v services protocols "$destdir/etc"
+}
