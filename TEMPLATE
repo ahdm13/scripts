@@ -1,0 +1,18 @@
+# Package information:
+: ${name:=NAME}
+: ${version:=VERSION}
+: ${build:=BUILD}
+: ${dists:="FNAME-${version}.tar.EXT"}
+: ${bdeps:=BDEPS}
+
+# Environment variables:
+: ${jobs:=1}
+
+build() {
+	tar -xvf "FNAME-${version}.tar.EXT"
+	cd "FNAME-${version}"
+
+	./configure --prefix=/usr
+	make -j "$jobs"
+	make DESTDIR="$destdir" install
+}
