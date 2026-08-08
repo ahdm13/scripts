@@ -1,0 +1,17 @@
+# Package information:
+: ${name:=man-pages}
+: ${version:=6.17}
+: ${build:=1-main1}
+: ${dists:="man-pages-${version}.tar.xz"}
+: ${bdeps:="bash coreutils findutils gcc glibc make ncurses"}
+
+# Environment variables:
+: ${jobs:=1}
+
+build() {
+	tar -xvf "man-pages-${version}.tar.xz"
+	cd "man-pages-${version}"
+
+	find man/man3 -name "crypt*" -delete
+	make -R GIT=false prefix="$destdir/usr" install
+}
