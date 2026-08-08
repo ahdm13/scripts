@@ -1,0 +1,29 @@
+# Package information:
+: ${name:=perl}
+: ${version:=5.42.0}
+: ${build:=0-pre1}
+: ${dists:="perl-${version}.tar.xz"}
+: ${bdeps:="binutils gcc glibc linux-headers make"}
+: ${supports_destdir=NO}
+
+# Environment variables:
+: ${jobs:=1}
+
+build() {
+	tar -xvf "perl-${version}.tar.xz"
+	cd "perl-${version}"
+
+	sh Configure -des                                            \
+		-D prefix=/usr                                       \
+		-D vendorprefix=/usr                                 \
+		-D useshrplib                                        \
+		-D privlib="/usr/lib/perl5/${version}/core_perl"     \
+		-D archlib="/usr/lib/perl5/${version}/core_perl"     \
+		-D sitelib="/usr/lib/perl5/${version}/site_perl"     \
+		-D sitearch="/usr/lib/perl5/${version}/site_perl"    \
+		-D vendorlib="/usr/lib/perl5/${version}/vendor_perl" \
+		-D vendorarch="/usr/lib/perl5/${version}/vendor_perl"
+
+	make -j "$jobs"
+	make install
+}
