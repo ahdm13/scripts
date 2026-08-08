@@ -24,4 +24,5 @@ build() {
 
 	make -j "$jobs"
 	make DESTDIR="$destdir" install
+	ln -sf "bash" "$destdir/usr/bin/sh"
 }
