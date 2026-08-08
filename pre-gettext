@@ -1,0 +1,22 @@
+# Package information:
+: ${name:=gettext}
+: ${version:=1.0}
+: ${build:=0-pre1}
+: ${dists:="gettext-${version}.tar.xz"}
+: ${bdeps:=}
+: ${supports_destdir:=YES}
+
+# Environment variables:
+: ${jobs:=1}
+
+build() {
+	tar -xvf "gettext-${version}.tar.xz"
+	cd "gettext-${version}"
+
+	./configure --disable-shared
+	make -j "$jobs"
+	mkdir -p "$destdir/usr/bin"
+	cp -v gettext-tools/src/msgfmt "$destdir/usr/bin"
+	cp -v gettext-tools/src/msgmerge "$destdir/usr/bin"
+	cp -v gettext-tools/src/xgettext "$destdir/usr/bin"
+}
