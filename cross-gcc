@@ -60,4 +60,5 @@ build() {
 
 	make -j "$jobs"
 	make DESTDIR="$destdir" install
+	ln -sf gcc "$destdir/usr/bin/cc"
 }
