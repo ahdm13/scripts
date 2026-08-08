@@ -1,0 +1,18 @@
+# Package information:
+: ${name:=bison}
+: ${version:=3.8.2}
+: ${build:=0-pre1}
+: ${dists:="bison-${version}.tar.xz"}
+: ${bdeps:="binutils gcc glibc linux-headers m4 make"}
+
+# Environment variables:
+: ${jobs:=1}
+
+build() {
+	tar -xvf "bison-${version}.tar.xz"
+	cd "bison-${version}"
+
+	./configure --prefix=/usr --docdir="/usr/share/doc/bison-${version}"
+	make -j "$jobs"
+	make DESTDIR="$destdir" install
+}
