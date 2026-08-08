@@ -1,0 +1,18 @@
+# Package information:
+: ${name:=texinfo}
+: ${version:=7.2}
+: ${build:=0-pre1}
+: ${dists:="texinfo-${version}.tar.xz"}
+: ${bdeps:="binutils gcc glibc linux-headers make ncurses perl"}
+
+# Environment variables:
+: ${jobs:=1}
+
+build() {
+	tar -xvf "texinfo-${version}.tar.xz"
+	cd "texinfo-${version}"
+
+	./configure --prefix=/usr
+	make -j "$jobs"
+	make DESTDIR="$destdir" install
+}
