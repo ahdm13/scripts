@@ -1,0 +1,23 @@
+# Package information:
+: ${name:=python}
+: ${version:=3.14.3}
+: ${build:=0-pre1}
+: ${dists:="Python-${version}.tar.xz"}
+: ${bdeps:="binutils gcc glibc linux-headers make"}
+: ${supports_destdir=NO}
+
+# Environment variables:
+: ${jobs:=1}
+
+build() {
+	tar -xvf "Python-${version}.tar.xz"
+	cd "Python-${version}"
+
+	./configure --prefix=/usr   \
+		--enable-shared     \
+		--without-ensurepip \
+		--without-static-libpython
+
+	make -j "$jobs"
+	make install
+}
