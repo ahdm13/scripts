@@ -6,7 +6,6 @@
 : ${dists="glibc-${version}.tar.xz
 glibc-fhs-1.patch"}
 : ${bdeps:=NIL}
-: ${supports_destdir:=YES}
 
 # Environment variables:
 : ${target:=x86_64-linux-gnu}

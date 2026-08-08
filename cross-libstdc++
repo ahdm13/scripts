@@ -5,7 +5,6 @@
 
 : ${dists="gcc-${version}.tar.xz"}
 : ${bdeps:=NIL}
-: ${supports_destdir:=YES}
 
 # Environment variables:
 : ${jobs:=1}

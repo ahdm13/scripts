@@ -12,7 +12,6 @@ gmp-${gmp_version}.tar.xz
 mpc-${mpc_version}.tar.gz
 mpfr-${mpfr_version}.tar.xz"}
 : ${bdeps:=NIL}
-: ${supports_destdir:=YES}
 
 # Environment variables:
 : ${jobs:=1}

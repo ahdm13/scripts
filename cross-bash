@@ -4,7 +4,6 @@
 : ${build:=0-pre1}
 : ${dists:="bash-${version}.tar.gz"}
 : ${bdeps:=NIL}
-: ${supports_destdir:=YES}
 
 # Environment variables:
 : ${jobs:=1}
