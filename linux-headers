@@ -1,5 +1,5 @@
 # Package information:
-: ${name:=kernel-headers}
+: ${name:=linux-headers}
 : ${version:=6.18.10}
 : ${build:=1-main}
 : ${dists:=linux-${version}.tar.xz}
