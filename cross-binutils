@@ -10,7 +10,6 @@
 : ${jobs:=1}
 : ${target:=x86_64-linux-gnu}
 : ${toolchain_dir:="/usr/cross-${target}"}
-: ${destdir:=/}
 
 export PATH="${toolchain_dir}/bin:$PATH"
 
