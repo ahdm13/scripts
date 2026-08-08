@@ -3,7 +3,7 @@
 : ${version:=1.0}
 : ${build:=0-pre1}
 : ${dists:="gettext-${version}.tar.xz"}
-: ${bdeps:=}
+: ${bdeps:="bash coreutils gcc glibc make"}
 
 # Environment variables:
 : ${jobs:=1}
