@@ -5,7 +5,6 @@
 : ${build:=1-main1}
 : ${dists:="glibc-${version}.tar.xz glibc-fhs-1.patch tzdata${tzversion}.tar.gz"}
 : ${bdeps:="bash binutils bison coreutils gawk gettext gcc grep glibc linux-headers m4 make ncurses perl python texinfo"}
-: ${supports_destdir=NO}
 
 # Environment variables:
 : ${jobs:=1}
@@ -39,8 +38,8 @@ build() {
 	fi
 
 	sed '/test-installation/s@$(PERL)@echo not running@' -i ../Makefile
-	make install
-	sed '/RTLDLIST=/s@/usr@@g' -i /usr/bin/ldd
+	make DESTDIR="$destdir" install
+	sed '/RTLDLIST=/s@/usr@@g' -i "$destdir/usr/bin/ldd"
 
 	# Install locales:
 	mkdir -p /usr/lib/locale
@@ -79,8 +78,11 @@ build() {
 	localedef -i zh_HK -f BIG5-HKSCS zh_HK.BIG5-HKSCS
 	localedef -i zh_TW -f UTF-8 zh_TW.UTF-8
 
+	mkdir -p "$destdir/usr/lib/locale"
+	cp -v /usr/lib/locale/locale-archive "$destdir/usr/lib/locale"
+
 	# nsswitch.conf
-	cat > /etc/nsswitch.conf << EOF
+	cat > "$destdir/etc/nsswitch.conf" << EOF
 #
 # /etc/nsswitch.conf
 #
@@ -101,7 +103,7 @@ EOF
 	# Configuring timezones:
 	tar -xvf ../../tzdata${tzversion}.tar.gz
 
-	ZONEINFO=/usr/share/zoneinfo
+	ZONEINFO="$destdir/usr/share/zoneinfo"
 	mkdir -pv "$ZONEINFO/posix"
 	mkdir -pv "$ZONEINFO/right"
 
@@ -113,12 +115,12 @@ EOF
 	cp -v zone.tab zone1970.tab iso3166.tab $ZONEINFO
 	zic -d $ZONEINFO -p America/New_York
 
-	ln -sfv /usr/share/zoneinfo/UTC /etc/localtime
+	ln -sfv /usr/share/zoneinfo/UTC "$destdir/etc/localtime"
 
 	# Configuring dynamic loader:
-	mkdir -p /etc/ld.so.conf.d
-	touch /etc/ld.so.conf.d/.keep
-	cat > /etc/ld.so.conf << EOF
+	mkdir -p "$destdir/etc/ld.so.conf.d"
+	touch "$destdir/etc/ld.so.conf.d/.keep"
+	cat > "$destdir/etc/ld.so.conf" << EOF
 #
 # /etc/ld.so.conf
 #
