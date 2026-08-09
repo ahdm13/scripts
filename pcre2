@@ -1,0 +1,29 @@
+# Package information:
+: ${name:=pcre2}
+: ${version:=10.47}
+: ${build:=1-main1}
+: ${dists:="pcre2-${version}.tar.bz2"}
+: ${bdeps:="binutils bzip2 gcc glibc linux-headers make ncurses perl readline zlib"}
+
+# Environment variables:
+: ${jobs:=1}
+
+build() {
+	tar -xvf "pcre2-${version}.tar.bz2"
+	cd "pcre2-${version}"
+
+	./configure --prefix=/usr                          \
+		--docdir="/usr/share/doc/pcre2-${version}" \
+		--enable-unicode                           \
+		--enable-jit                               \
+		--enable-pcre2-16                          \
+		--enable-pcre2-32                          \
+		--enable-pcre2grep-libz                    \
+		--enable-pcre2grep-libbz2                  \
+		--enable-pcre2test-libreadline             \
+		--disable-static
+
+	make -j "$jobs"
+	make -j "$jobs" check
+	make DESTDIR="$destdir" install
+}
