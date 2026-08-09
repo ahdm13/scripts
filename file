@@ -1,0 +1,19 @@
+# Package information:
+: ${name:=file}
+: ${version:=5.46}
+: ${build:=1-main1}
+: ${dists:="file-${version}.tar.gz"}
+: ${bdeps:="binutils gcc glibc linux-headers make"}
+
+# Environment variables:
+: ${jobs:=1}
+
+build() {
+	tar -xvf "file-${version}.tar.gz"
+	cd "file-${version}"
+
+	./configure --prefix=/usr
+	make -j "$jobs"
+	make -j "$jobs" check
+	make DESTDIR="$destdir" install
+}
