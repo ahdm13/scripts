@@ -1,0 +1,19 @@
+# Package information:
+: ${name:=xz}
+: ${version:=5.8.2}
+: ${build:=1-main1}
+: ${dists:="xz-${version}.tar.xz"}
+: ${bdeps:="binutils gcc glibc linux-headers make"}
+
+# Environment variables:
+: ${jobs:=1}
+
+build() {
+	tar -xvf "xz-${version}.tar.xz"
+	cd "xz-${version}"
+
+	./configure --prefix=/usr --disable-static --docdir="/usr/share/doc/xz-${version}"
+	make -j "$jobs"
+	make -j "$jobs" check
+	make DESTDIR="$destdir" install
+}
