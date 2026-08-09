@@ -1,0 +1,19 @@
+# Package information:
+: ${name:=lz4}
+: ${version:=1.10.0}
+: ${build:=1-main1}
+: ${dists:="lz4-${version}.tar.gz"}
+: ${bdeps:="binutils gcc glibc linux-headers make"}
+: ${supports_destdir:=NO}
+
+# Environment variables:
+: ${jobs:=1}
+
+build() {
+	tar -xvf "lz4-${version}.tar.gz"
+	cd "lz4-${version}"
+
+	make -j "$jobs" BUILD_STATIC=no PREFIX=/usr
+	make -j 1 check
+	make BUILD_STATIC=no PREFIX=/usr install
+}
