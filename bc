@@ -1,0 +1,20 @@
+# Package information:
+: ${name:=bc}
+: ${version:=7.0.3}
+: ${build:=1-main1}
+: ${dists:="bc-${version}.tar.xz"}
+: ${bdeps:="binutils gcc glibc linux-headers make ncurses readline"}
+
+# Environment variables:
+: ${jobs:=1}
+
+build() {
+	tar -xvf "bc-${version}.tar.xz"
+	cd "bc-${version}"
+
+	CC='gcc -std=c99' ./configure --prefix=/usr -G -O3 -r
+
+	make -j "$jobs"
+	make -j "$jobs" test
+	make DESTDIR="$destdir" install
+}
