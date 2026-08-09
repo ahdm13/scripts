@@ -1,0 +1,36 @@
+# Package information:
+: ${name:=bzip2}
+: ${version:=1.0.8}
+: ${build:=1-main1}
+: ${dists:="bzip2-${version}.tar.gz bzip2-${version}-install_docs-1.patch"}
+: ${bdeps:="binutils gcc glibc linux-headers make"}
+
+# Environment variables:
+: ${jobs:=1}
+
+build() {
+	tar -xvf "bzip2-${version}.tar.gz"
+	cd "bzip2-${version}"
+
+	patch -Np1 -i ../bzip2-1.0.8-install_docs-1.patch
+	sed -i 's@\(ln -s -f \)$(PREFIX)/bin/@\1@' Makefile
+	sed -i "s@(PREFIX)/man@(PREFIX)/share/man@g" Makefile
+
+	make -f Makefile-libbz2_so
+	make clean
+
+	make -j "$jobs"
+	make PREFIX="$destdir/usr" install
+
+	mkdir -p "$destdir/usr/lib"
+	cp -av libbz2.so.* "$destdir/usr/lib"
+	ln -sfv libbz2.so.1.0.8 "$destdir/usr/lib/libbz2.so"
+	ln -sfv libbz2.so.1.0.8 "$destdir/usr/lib/libbz2.so.1"
+
+	mkdir -p "$destdir/usr/bin"
+	cp -v bzip2-shared "$destdir/usr/bin/bzip2"
+	ln -sfv bzip2 "$destdir/usr/bin/bzcat"
+	ln -sfv bzip2 "$destdir/usr/bin/bunzip2"
+
+	rm -fv "$destdir/usr/lib/libbz2.a"
+}
