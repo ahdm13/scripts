@@ -1,0 +1,20 @@
+# Package information:
+: ${name:=zstd}
+: ${version:=1.5.7}
+: ${build:=1-main1}
+: ${dists:="zstd-${version}.tar.gz"}
+: ${bdeps:="binutils file gcc glibc linux-headers make"}
+: ${supports_destdir=NO}
+
+# Environment variables:
+: ${jobs:=1}
+
+build() {
+	tar -xvf "zstd-${version}.tar.gz"
+	cd "zstd-${version}"
+
+	make -j "$jobs" prefix=/usr
+	make -j "$jobs" check
+	make prefix=/usr install
+	rm -v /usr/lib/libzstd.a
+}
