@@ -15,6 +15,11 @@ build() {
 	tar -xvf "glibc-${version}.tar.xz"
 	cd "glibc-${version}"
 
+	mkdir -pv "${destdir}/lib64"
+
+	ln -svf ../usr/lib/ld-linux-x86-64.so.2 "${destdir}/lib64"
+	ln -svf ../usr/lib/ld-linux-x86-64.so.2 "${destdir}/lib64/ld-lsb-x86-64.so.3"
+
 	patch -Np1 -i ../glibc-fhs-1.patch
 
 	mkdir -v build
