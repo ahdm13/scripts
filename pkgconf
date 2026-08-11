@@ -1,0 +1,22 @@
+# Package information:
+: ${name:=pkgconf}
+: ${version:=2.5.1}
+: ${build:=1-main1}
+: ${dists:="pkgconf-${version}.tar.xz"}
+: ${bdeps:="binutils gcc glibc linux-headers make"}
+
+# Environment variables:
+: ${jobs:=1}
+
+build() {
+	tar -xvf "pkgconf-${version}.tar.xz"
+	cd "pkgconf-${version}"
+
+	./configure --prefix=/usr --disable-static --docdir="/usr/share/doc/pkgconf-${version}"
+
+	make -j "$jobs"
+	make DESTDIR="$destdir" install
+
+	ln -sv pkgconf "$destdir/usr/bin/pkg-config"
+	ln -sv pkgconf.1 "$destdir/usr/share/man/man1/pkg-config.1"
+}
