@@ -1,0 +1,28 @@
+# Package information:
+: ${name:=dejagnu}
+: ${version:=1.6.3}
+: ${build:=1-main1}
+: ${dists:="dejagnu-${version}.tar.gz"}
+: ${bdeps:="base-files binutils expect gawk gcc glibc tcl linux-headers make perl texinfo"}
+
+# Environment variables:
+: ${jobs:=1}
+
+build() {
+	tar -xvf "dejagnu-${version}.tar.gz"
+	cd "dejagnu-${version}"
+
+	mkdir -pv build
+	cd build
+
+	../configure --prefix=/usr
+	makeinfo --html --no-split -o doc/dejagnu.html ../doc/dejagnu.texi
+	makeinfo --plaintext -o doc/dejagnu.txt ../doc/dejagnu.texi
+
+	make -j "$jobs" check
+
+	make DESTDIR="$destdir" install
+	install -v -dm755 "$destdir/usr/share/doc/dejagnu-${version}"
+	install -v -m644 doc/dejagnu.html "$destdir/usr/share/doc/dejagnu-${version}"
+	install -v -m644 doc/dejagnu.txt "$destdir/usr/share/doc/dejagnu-${version}"
+}
