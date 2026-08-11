@@ -1,0 +1,35 @@
+# Package information:
+: ${name:=expect}
+: ${version:=5.45.4}
+: ${build:=1-main1}
+: ${dists:="expect${version}.tar.gz expect-${version}-gcc15-1.patch"}
+: ${bdeps:="binutils gcc glibc linux-headers make python tcl"}
+
+# Environment variables:
+: ${jobs:=1}
+
+build() {
+	tar -xvf "expect${version}.tar.gz"
+	cd "expect${version}"
+
+	pty_works=`python3 -c 'from pty import spawn; spawn(["printf", "YES"])'`
+	if [ "$pty_works" != YES ]; then
+		echo "PTYs are not working! Something is wrong..." >&2
+		false
+	fi
+
+	patch -Np1 -i "../expect-${version}-gcc15-1.patch"
+
+	./configure --prefix=/usr       \
+		--with-tcl=/usr/lib     \
+		--enable-shared         \
+		--disable-rpath         \
+		--mandir=/usr/share/man \
+		--with-tclinclude=/usr/include
+
+	make -j "$jobs"
+	make -j "$jobs" test
+
+	make DESTDIR="$destdir" install
+	ln -svf "expect${version}/libexpect${version}.so" "$destdir/usr/lib"
+}
