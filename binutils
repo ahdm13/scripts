@@ -1,0 +1,42 @@
+# Package information:
+: ${name:=binutils}
+: ${version:=2.46.0}
+: ${build:=1-main1}
+: ${dists:="binutils-${version}.tar.xz"}
+bdeps_extra="bash gawk ncurses pkgconf sed zstd"
+: ${bdeps:="base-files binutils bison dejagnu expect file flex gettext gcc glibc linux-headers m4 make perl tcl texinfo zlib $bdeps_extra"}
+
+# Environment variables:
+: ${jobs:=1}
+
+build() {
+	tar -xvf "binutils-${version}.tar.xz"
+	cd "binutils-${version}"
+
+	mkdir -pv build
+	cd build
+
+	../configure                \
+		--prefix=/usr       \
+		--sysconfdir=/etc   \
+		--enable-ld=default \
+		--enable-plugins    \
+		--enable-shared     \
+		--disable-werror    \
+		--enable-64-bit-bfd \
+		--enable-new-dtags  \
+		--with-system-zlib  \
+		--enable-default-hash-style=gnu
+
+	make -j "$jobs" tooldir=/usr
+	make -j "$jobs" -k check || true
+	make tooldir=/usr DESTDIR="$destdir" install
+
+	rm -v "${destdir}/usr/lib/libbfd.a"
+	rm -v "${destdir}/usr/lib/libctf.a"
+	rm -v "${destdir}/usr/lib/libctf-nobfd.a"
+	rm -v "${destdir}/usr/lib/libopcodes.a"
+	rm -v "${destdir}/usr/lib/libsframe.a"
+	rm -v "${destdir}/usr/lib/libgprofng.a"
+	rm -rvf "${destdir}/usr/share/doc/gprofng"
+}
