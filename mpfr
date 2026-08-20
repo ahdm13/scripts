@@ -1,0 +1,26 @@
+# Package information:
+: ${name:=mpfr}
+: ${version:=4.2.2}
+: ${build:=1-main1}
+: ${dists:="mpfr-${version}.tar.xz"}
+: ${bdeps:="binutils file flex gcc glibc gmp linux-headers make perl zlib zstd texinfo"}
+
+# Environment variables:
+: ${jobs:=1}
+
+build() {
+	tar -xvf "mpfr-${version}.tar.xz"
+	cd "mpfr-${version}"
+
+	./configure --prefix=/usr    \
+		--disable-static     \
+		--enable-thread-safe \
+		--docdir="/usr/share/doc/mpfr-${version}"
+
+	make -j "$jobs"
+	make -j "$jobs" html
+	make -j "$jobs" check 2>&1 | tee mpfr-check-log
+
+	make DESTDIR="$destdir" install
+	make DESTDIR="$destdir" install-html
+}
