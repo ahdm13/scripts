@@ -1,0 +1,29 @@
+# Package information:
+: ${name:=gmp}
+: ${version:=6.3.0}
+: ${build:=1-main1}
+: ${dists:="gmp-${version}.tar.xz"}
+: ${bdeps:="binutils bison gcc>=15 flex glibc linux-headers m4 make ncurses perl readline texinfo zlib zstd"}
+
+# Environment variables:
+: ${jobs:=1}
+
+build() {
+	tar -xvf "gmp-${version}.tar.xz"
+	cd "gmp-${version}"
+
+	sed -i '/long long t1;/,+1s/()/(...)/' configure
+
+	./configure              \
+		--prefix=/usr    \
+		--enable-cxx     \
+		--disable-static \
+		--docdir="/usr/share/doc/gmp-${version}"
+
+	make -j "$jobs"
+	make -j "$jobs" html
+	make -j "$jobs" check 2>&1 | tee gmp-check-log
+
+	make DESTDIR="$destdir" install
+	make DESTDIR="$destdir" install-html
+}
