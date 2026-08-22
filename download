@@ -1,9 +1,15 @@
-#!/bin/sh -e
+#!/bin/sh -ex
 
 dirpath=`dirname $0`
 distpath="$1"
+distfile=`basename "$distpath"`
+
+if [ -f "$distpath" ]; then
+	exit 0
+fi
 
 mkdir -p `dirname "$distpath"`
 
 url=`grep "/$distfile$" "$dirpath/disturls"`
-wget -c "$url" -O "$distpath"
+wget -c "$url" -O "$distpath.partial"
+mv "$distpath.partial" "$distpath"
