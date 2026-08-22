@@ -1,0 +1,9 @@
+#!/bin/sh -e
+
+dirpath=`dirname $0`
+distpath="$1"
+
+mkdir -p `dirname "$distpath"`
+
+url=`grep "/$distfile$" "$dirpath/disturls"`
+wget -c "$url" -O "$distpath"
