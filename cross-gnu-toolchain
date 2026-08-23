@@ -168,6 +168,7 @@ build_glibc() {
 
 	make -j 1
 	make DESTDIR="${glibc_install}" install
+	rm -f "${glibc_install}/usr/share/info/dir"
 
 	sed '/RTLDLIST=/s@/usr@@g' -i "${glibc_install}/usr/bin/ldd"
 	sed 's?/usr/lib/??g' -i "${glibc_install}/usr/lib/libc.so"
