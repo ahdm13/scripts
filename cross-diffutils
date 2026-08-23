@@ -20,4 +20,5 @@ build() {
 
 	make -j "$jobs"
 	make DESTDIR="$destdir" install
+	rm -f "$destdir/usr/share/info/dir"
 }
