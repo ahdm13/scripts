@@ -3,7 +3,7 @@
 : ${version:=3.8.2}
 : ${build:=0-pre1}
 : ${dists:="bison-${version}.tar.xz"}
-: ${bdeps:="binutils gcc glibc linux-headers m4 make"}
+: ${bdeps:="binutils gettext gcc glibc linux-headers m4 make"}
 
 # Environment variables:
 : ${jobs:=1}
