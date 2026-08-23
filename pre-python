@@ -3,7 +3,7 @@
 : ${version:=3.14.3}
 : ${build:=0-pre1}
 : ${dists:="Python-${version}.tar.xz"}
-: ${bdeps:="binutils gcc glibc linux-headers make"}
+: ${bdeps:="binutils gcc glibc linux-headers make ncurses"}
 : ${supports_destdir=NO}
 
 # Environment variables:
