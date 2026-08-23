@@ -35,6 +35,7 @@ build() {
 
 	make -j "$jobs"
 	make DESTDIR="$destdir" install
+	rm -f "$destdir/usr/share/info/dir"
 
 	rm -v "${destdir}/usr/lib/libbfd.a" "${destdir}/usr/lib/libbfd.la"
 	rm -v "${destdir}/usr/lib/libctf.a" "${destdir}/usr/lib/libctf.la"
